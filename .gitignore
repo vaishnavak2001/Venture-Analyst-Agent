@@ -1,0 +1,21 @@
+echo ".env" >> .gitignore
+# Environment
+.env
+venv/
+__pycache__/
+*.pyc
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data
+data/*.pdf
+
+# Test files
+test_*.py
+create_test_pdf.py

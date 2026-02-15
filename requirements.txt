@@ -1,0 +1,25 @@
+# The Venture Analyst Agent — Dependencies
+# --- LLM & Orchestration ---
+langchain==0.3.25
+langchain-groq==0.3.3
+langchain-community==0.3.24
+langgraph==0.4.1
+
+# --- RAG: Embeddings & Vector Store ---
+faiss-cpu==1.11.0
+sentence-transformers==4.1.0
+
+# --- Tools ---
+duckduckgo-search==7.5.1
+
+# --- Structured Output ---
+pydantic==2.11.1
+
+# --- PDF Parsing ---
+pdfplumber==0.11.6
+
+# --- Frontend ---
+streamlit==1.45.1
+
+# --- Environment ---
+python-dotenv==1.1.0

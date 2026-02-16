@@ -25,6 +25,47 @@ All in **under 2 minutes**, with full transparency into the AI's reasoning.
 
 ---
 
+## 📸 Screenshots
+
+### Landing Page
+Upload a pitch deck to begin the autonomous analysis.
+![Landing Page](screenshots/01_landing.png)
+
+### Analysis in Progress
+The AI extracts claims, searches the web, and generates a report — all autonomously.
+![Processing](screenshots/02_processing.png)
+
+### Risk Score Dashboard
+At-a-glance metrics: Risk Score, Supported/Contradicted/Inconclusive claims.
+![Risk Score](screenshots/03_risk_score.png)
+
+### Claim-by-Claim Transparency ("Glass Box")
+Every claim shows the verdict, reasoning, and raw search results. Full transparency.
+![Claim Details](screenshots/04_claim_details.png)
+
+### Raw Pipeline Data
+This is the 'Glass Box' — full transparency into the AI's process.
+
+📄 Extracted PDF Text
+
+📋 Extracted Claims (JSON)
+
+🔍 Verified Claims (JSON)
+
+⚠️ Errors
+
+
+![Raw Pipeline Data](screenshots/05_raw_pipeline_data.png)
+
+### Investment Memo
+AI Generated Investment Memo with Executive Summary, Verified Claims Analysis(Supported Claims, Contradicted Claims(RED FLAGS), Inconclusive Claims), Key Risk Factors, Investment Recommendation.
+![Investment Memo](screenshots/06_investment_memo.png)
+
+### Dashboard
+Dashboard with Upload Pitch Deck, How It Works, Tech Stack.
+![Dashboard](screenshots/07_dashboard.png)
+---
+
 ## 🏗️ System Architecture
 
 ```mermaid

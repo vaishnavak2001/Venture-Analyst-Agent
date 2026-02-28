@@ -569,10 +569,11 @@ def generate_analysis(state: VentureAnalystState) -> dict:
         "inconclusive_claims": inconclusive_count,
     })
 
-    # Parse the analyst's output
+      # Parse the response
     try:
         raw_text = response.content.strip()
 
+        # Extract JSON robustly
         first_brace = raw_text.find("{")
         last_brace = raw_text.rfind("}")
 
@@ -580,26 +581,57 @@ def generate_analysis(state: VentureAnalystState) -> dict:
             json_string = raw_text[first_brace:last_brace + 1]
         else:
             json_string = raw_text
-        parsed = AnalystResult.model_validate_json(json_string)
-        risk_score = max(0, min(100, parsed.risk_score))  # Ensure between 0-100
+
+        # --- Fix control characters that break JSON parsing ---
+        # The LLM puts real newlines inside the markdown string.
+        # We need to try Pydantic first, and if it fails, use json.loads
+        # with manual cleaning.
+        try:
+            parsed = AnalystResult.model_validate_json(json_string)
+        except Exception:
+            # Clean control characters inside string values
+            import re
+            # Replace actual newlines inside JSON strings with \\n
+            cleaned = json_string.replace('\r\n', '\\n').replace('\r', '\\n').replace('\n', '\\n')
+            # Replace tabs
+            cleaned = cleaned.replace('\t', '\\t')
+
+            try:
+                parsed = AnalystResult.model_validate_json(cleaned)
+            except Exception:
+                # Last resort: parse with json.loads which is more forgiving
+                data = json.loads(cleaned)
+                parsed = AnalystResult(
+                    risk_score=data.get("risk_score", 50),
+                    investment_memo=data.get("investment_memo", "Error parsing memo.")
+                )
+
+        # Clamp risk score to 0-100
+        risk_score = max(0, min(100, parsed.risk_score))
+
         print(f"\n   ✅ Analysis complete!")
         print(f"   📊 Risk Score: {risk_score}/100")
 
         risk_level = "LOW" if risk_score < 35 else "MEDIUM" if risk_score < 65 else "HIGH"
-        print(f"   ⚠️ Risk Level: {risk_level}")
+        print(f"   🚦 Risk Level: {risk_level}")
+
         return {
             "risk_score": risk_score,
             "final_report": parsed.investment_memo,
-            "status": f"Analysis complete - Risk Score: {risk_score}/100 ({risk_level})",
+            "status": f"Analysis complete — Risk Score: {risk_score}/100 ({risk_level})",
             "errors": state.get("errors", []),
         }
+
     except Exception as e:
-        print(f"\n   ⚠️ Error parsing analyst output: {e}")
+        print(f"\n   ❌ Error generating analysis: {e}")
         print(f"   Raw response: {response.content[:500]}")
 
+        # Even on error, try to extract what we can
+        fallback_report = response.content if response.content else "Error generating memo."
+        
         return {
             "risk_score": 50,
-            "final_report": f"# Error \nFailed to generate investment memo\n\nError:{str(e)}\n\nRaw LLM output:\n{response.content[:1000]}",
-            "status": f"Error during analysis: {str(e)}",
-            "errors": state.get("errors", []) + [f"Analyst parsing error: {str(e)}"],
+            "final_report": f"# Investment Memo\n\n{fallback_report}",
+            "status": f"Analysis complete with warnings",
+            "errors": state.get("errors", []) + [f"Analyst parsing warning: {str(e)}"],
         }

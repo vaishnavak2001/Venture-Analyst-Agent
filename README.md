@@ -53,8 +53,6 @@ This is the 'Glass Box' — full transparency into the AI's process.
 🔍 Verified Claims (JSON)
 
 ⚠️ Errors
-
-
 ![Raw Pipeline Data](screenshots/05_raw_pipeline_data.png)
 
 ### Investment Memo
